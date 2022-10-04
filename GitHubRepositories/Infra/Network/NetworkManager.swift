@@ -46,9 +46,6 @@ class NetworkManager: HTTPClient {
 }
 
 // MARK: Helpers
-
-extension NetworkManager: NetworkJSONDecoding {}
-
 extension NetworkManager {
     private func buildRequest(urlPath: String, httpMethod: RestMethod, parameters: [String: Any]?, headers: [String: String]? = nil) -> URLRequest? {
         guard let url = buildURL(urlPath: urlPath, parameters: parameters) else {return nil}
