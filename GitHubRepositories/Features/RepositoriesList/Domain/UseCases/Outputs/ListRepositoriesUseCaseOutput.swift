@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol ListRepositoriesUseCaseOutput: RepositoriesListOutput {
+protocol ListReposUseCaseOutput: ReposListOutput {
     
 }

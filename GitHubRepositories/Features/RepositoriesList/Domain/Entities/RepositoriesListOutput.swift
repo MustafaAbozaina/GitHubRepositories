@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol RepositoriesListOutput {
-    func repositories(_ repos: [Repository])
+protocol ReposListOutput {
+    func repos(_ repos: [Repo])
 }

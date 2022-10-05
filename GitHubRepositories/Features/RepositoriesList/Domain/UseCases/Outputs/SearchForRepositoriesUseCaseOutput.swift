@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol SearchForARepositoryUseCaseOutput: RepositoriesListOutput {
+protocol SearchForReposUseCaseOutput: ReposListOutput {
     
 }

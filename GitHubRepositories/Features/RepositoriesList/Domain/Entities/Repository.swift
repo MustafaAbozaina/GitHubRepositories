@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol Repository {
+protocol Repo {
     var name: String? {get}
     var owner: String? {get}
     var avatar: String? {get}
