@@ -7,4 +7,6 @@
 
 import Foundation
 
-protocol SearchForARepositoryUseCase: RepositoriesUseCase { }
+protocol SearchForARepositoryUseCase: UseCase {
+    func searchForRepo(name: String)
+}
