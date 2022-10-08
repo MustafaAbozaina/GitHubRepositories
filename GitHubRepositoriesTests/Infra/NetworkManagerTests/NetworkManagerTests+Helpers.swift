@@ -42,12 +42,11 @@ extension NetworkManagerTests {
                 XCTFail(file: file, line: line)
             }
             
-        }, failure: { (error: Error ) in
+        }, failure: { (networkFailure: NetworkFailure<DummyNetworkFailureModel> ) in
             if expectedOutput == .success {
                 XCTFail(file: file, line: line)
             } else {
                 exp.fulfill()
-                XCTAssertNotNil(error)
             }
         })
         waitForExpectations(timeout: 2, handler: nil)
@@ -65,14 +64,14 @@ extension NetworkManagerTests {
                 XCTFail(file: file, line: line)
             }
             result = mocked
-        }, failure: { (error: Error ) in
+        }, failure: { (networkFailure: NetworkFailure<DummyNetworkFailureModel>) in
             if expectedOutput == .success {
                 XCTFail(file: file, line: line)
             } else {
                 exp.fulfill()
-                XCTAssertNotNil(error)
+                XCTAssertNotNil(networkFailure.error)
             }
-            result = error
+            result = networkFailure.error
         })
         waitForExpectations(timeout: 2, handler: nil)
         return result
@@ -93,4 +92,8 @@ struct GeneralTestingJson: Codable {
     var title: String?
     var subTitle: String?
     var url: String?
+}
+
+struct DummyNetworkFailureModel: Codable {
+    
 }

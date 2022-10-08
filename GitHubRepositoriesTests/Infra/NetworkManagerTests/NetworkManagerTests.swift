@@ -20,7 +20,7 @@ class NetworkManagerTests: XCTestCase {
         let sut = NetworkManager(session: session, baseUrl: anyUrl ,headers: headers)
         let testUrl1 = "testUrl1"
         sut.loadData(urlPath: testUrl1, restMethod: httpMethod, parameters: parameters , success: { (mocked: DummyCodable) in
-        }, failure: { (error: Error ) in
+        }, failure: { (networkFailure: NetworkFailure<DummyNetworkFailureModel>) in
         })
 
         XCTAssertEqual(anyUrl+testUrl1, session.url?.path)
@@ -36,13 +36,13 @@ class NetworkManagerTests: XCTestCase {
         let sut = NetworkManager(session: session)
         
         sut.loadData(urlPath: anyUrl, restMethod: .get, parameters: nil,success: { (mocked: DummyCodable) in
-        }, failure: { (error: Error ) in
+        }, failure: { (networkFailure: NetworkFailure<DummyNetworkFailureModel> ) in
         })
         sut.loadData(urlPath: anyUrl, restMethod: .get, parameters: nil,success: { (mocked: DummyCodable) in
-        }, failure: { (error: Error ) in
+        }, failure: { (networkFailure: NetworkFailure<DummyNetworkFailureModel> ) in
         })
         sut.loadData(urlPath: anyUrl, restMethod: .get, parameters: nil,success: { (mocked: DummyCodable) in
-        }, failure: { (error: Error ) in
+        }, failure: { (networkFailure: NetworkFailure<DummyNetworkFailureModel> ) in
         })
         let callingTimes = 3
         
@@ -61,7 +61,7 @@ class NetworkManagerTests: XCTestCase {
     func test_loadData_shouldFailure_inCaseErrorStatusCode() {
         let (sut, urlSession) = makeSUT()
         urlSession.dataTaskCompletion = (nil, HTTPURLResponse(url: URL(string:"") ?? URL(fileURLWithPath: ""), statusCode: 300, httpVersion: nil, headerFields: nil) , nil)
-        expect(expectedOutput: .failure, sut: sut, expectationDesc: #function)
+        expect(expectedOutput: .failure, sut: sut, expectationDesc: #function, line: #line)
     }
     
     /// Success Status Codes between 200 and 299

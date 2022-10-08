@@ -19,28 +19,59 @@ class NetworkManager: HTTPClient {
         self.headers = headers
     }
 
-    func loadData<T: Codable>(urlPath: String, restMethod: RestMethod, parameters: [String: Any]?, success: @escaping (T)-> (), failure: @escaping (NetworkError)-> ()) {
+    func loadData<T: Codable, F: Codable>(urlPath: String, restMethod: RestMethod, parameters: [String: Any]?, success: @escaping (T)-> (), failure: @escaping (NetworkFailure<F>)-> ()) {
         let fullUrl = baseUrl + urlPath
         guard let urlRequest = buildRequest(urlPath: fullUrl, httpMethod: restMethod, parameters: parameters, headers: headers) else {return }
         
         self.session.dataTask(with: urlRequest) { data, response, error in
             if let _ = error {
-                failure(.generalError)
-            } else if let response = response as? HTTPURLResponse {
-                if response.statusCode > 299 || response.statusCode < 200  {
-                    failure(.responseFailureStatusCode)
-                }
+                failure(.init(failureModel: nil, error: .generalError))
+                return
             }
-          
-            if let data = data, let _ = response {
-                let decodedValue: T? = self.jsonDecoder.decode(responseData: data)
-                if let decodedValue = decodedValue {
-                    success(decodedValue)
-                } else {
-                    failure(.failedToMapDataToModel)
-                }
-            }
+            
+            self.handleResult(data: data, response: response as? HTTPURLResponse, success: success, failure: failure)
+            
         }.resume()
+    }
+    
+    private func handleResult<T: Codable, F: Codable>(data: Data?, response: HTTPURLResponse?, success: @escaping (T)-> Void, failure: (NetworkFailure<F>)-> Void) {
+        var statusCodeFailure = false
+        guard let data = data, let response = response else {
+            failure(.init(failureModel: nil, error: .responseFailureStatusCode, stausCode: response?.statusCode ))
+
+            return
+        }
+
+            if response.statusCode > 299 || response.statusCode < 200  {
+                statusCodeFailure = true
+        }
+        
+        if (statusCodeFailure) {
+            failure(self.buildFailureModel(data: data, response: response))
+        }
+        else {
+            if let successModel: T = self.decodeDataToModel(data: data) {
+                success(successModel)
+            } else {
+                failure(.init(failureModel: nil, error: .failedToMapDataToModel, stausCode: response.statusCode))
+            }
+            
+        }
+    }
+    
+    private func buildFailureModel<F: Codable>(data: Data, response: URLResponse) -> NetworkFailure<F> {
+        let failureResponse: F? = self.decodeDataToModel(data: data)
+            var errorType: NetworkError = .responseFailureStatusCode
+                if failureResponse == nil {
+                    errorType = .failedToMapDataToModel
+                }
+        let statusCode = (response as? HTTPURLResponse)?.statusCode
+             return .init(failureModel: failureResponse, error: errorType, stausCode: statusCode)
+    }
+        
+    private func decodeDataToModel<T: Codable>(data: Data) -> T? {
+        let decodedValue: T? = self.jsonDecoder.decode(responseData: data)
+        return decodedValue
     }
     
 }
@@ -92,3 +123,12 @@ enum NetworkError: Int, Error {
     case responseFailureStatusCode
     case failedToMapDataToModel
 }
+
+struct NetworkFailure<F: Decodable> {
+    var failureModel: F?
+    var error: NetworkError
+    var stausCode: Int?
+}
+
+
+

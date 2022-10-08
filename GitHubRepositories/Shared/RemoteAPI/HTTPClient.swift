@@ -8,5 +8,5 @@
 import Foundation
 
 protocol HTTPClient {
-    func loadData<T: Codable>(urlPath: String, restMethod: RestMethod, parameters: [String: Any]?, success: @escaping (T)-> (), failure: @escaping (NetworkError)-> ())
+    func loadData<T: Codable, F: Codable>(urlPath: String, restMethod: RestMethod, parameters: [String: Any]?, success: @escaping (T)-> (), failure: @escaping (NetworkFailure<F>)-> ())
 }
