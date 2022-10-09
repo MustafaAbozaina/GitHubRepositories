@@ -8,5 +8,5 @@
 import Foundation
 
 protocol ReposListOutput {
-    func repos(_ repos: [Repo])
+    func reposOutput(_ repos: [Repo])
 }

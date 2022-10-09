@@ -8,5 +8,5 @@
 import Foundation
 
 protocol SearchForReposUseCase: UseCase {
-    func searchForRepos(name: String)
+    var searchKeyword: String {get set}
 }

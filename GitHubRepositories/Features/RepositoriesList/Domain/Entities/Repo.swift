@@ -9,13 +9,13 @@ import Foundation
 
 protocol Repo {
     var name: String? {get}
-    var owner: String? {get}
+    var ownerName: String? {get}
     var avatar: String? {get}
-    var date: String? {get}
-    var dateType: RepoCreationDate {get}
+    var creationDate: String? {get}
+    var creationDuration: RepoCreationDuration {get}
 }
 
-enum RepoCreationDate {
+enum RepoCreationDuration {
     case lessThan6Months
     case greaterThan6Months
 }
