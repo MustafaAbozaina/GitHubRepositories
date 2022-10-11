@@ -8,7 +8,7 @@
 import Foundation
 
 class DefaultSearchForReposUseCase: SearchForReposUseCase {
-    var output: ReposListOutput?
+    var output: SearchForReposUseCaseOutput?
     var repository: SearchForReposRepository
     var searchKeyword = ""
     
@@ -17,6 +17,11 @@ class DefaultSearchForReposUseCase: SearchForReposUseCase {
     }
     
     func start() {
+        if searchKeyword.count < 2 {
+            output?.searchCharacterShouldBeAtLeast2Characters()
+            return
+        }
+        
         self.repository.searchForRepos(keyword: searchKeyword)
     }
 }

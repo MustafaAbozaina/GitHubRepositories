@@ -20,6 +20,19 @@ class SearchForReposUseCaseTests: XCTestCase {
         sut.start()
     }
     
+    func test_search_shouldInformUser_ifSearchWordIsOneCharacter() {
+        let exp = expectation(description: #function)
+        let dummyRepo = MockSearchRepository()
+        let sut = DefaultSearchForReposUseCase(repository: dummyRepo)
+        let useCaseClient = MockSearchForReposClient(useCase: sut)
+        useCaseClient.exp = exp
+        sut.output = useCaseClient
+        
+        sut.start()
+        
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+    
 }
 
 class MockSearchRepository: SearchForReposRepository {
@@ -41,12 +54,17 @@ class MockSearchRepository: SearchForReposRepository {
 
 class MockSearchForReposClient {
     let listAllReposUseCase: UseCase
+    var exp: XCTestExpectation?
     init(useCase: UseCase) {
         self.listAllReposUseCase = useCase
     }
 }
 
-extension MockSearchForReposClient: ListReposUseCaseOutput {
+extension MockSearchForReposClient: SearchForReposUseCaseOutput {
+    func searchCharacterShouldBeAtLeast2Characters() {
+        exp?.fulfill()
+    }
+
     func reposOutput(_ repos: [Repo]) {
         let expectedResult: [RepoCreationDuration] = [.lessThan6Months, .greaterThan6Months, .greaterThan6Months, .lessThan6Months, .lessThan6Months]
         for i in 0..<repos.count {

@@ -8,5 +8,5 @@
 import Foundation
 
 protocol SearchForReposUseCaseOutput: ReposListOutput {
-    
+    func searchCharacterShouldBeAtLeast2Characters()
 }
